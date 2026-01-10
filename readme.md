@@ -1,3 +1,5 @@
+### https://aistudio.google.com/app/api-keys
+
 ### 🧪 Test 1 : Le "Data Scientist" Idéal (Happy Path)
 
 *Ce test vérifie que le matching simple fonctionne quand tout est aligné.*
