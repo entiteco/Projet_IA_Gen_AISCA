@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  aisca-app:
+    build: .
+    container_name: aisca_container
+    # Mappe le port 8501 du conteneur vers le 8501 de votre machine
+    ports:
+      - "8501:8501"
+    # LE SECRET : Volumes
+    # Cela permet de modifier le code en direct sans relancer le build
+    volumes:
+      - .:/app
+    # Variables d'environnement (pour ne pas les mettre en dur)
+    env_file:
+      - .env
+    # Commande pour forcer le rechargement auto de Streamlit
+    command: streamlit run app.py --server.address=0.0.0.0 --server.fileWatcherType=poll
