@@ -1,93 +1,135 @@
-import streamlit as st
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
+import streamlit as st
 
 @st.cache_resource
 def load_model():
     return SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-@st.cache_data
-def encode_jobs(_model, job_descriptions):
-    return _model.encode(job_descriptions)
-
 class SemanticMatcher:
     def __init__(self):
         self.model = load_model()
-
-    def apply_business_rules(self, row, score, filters):
-        debug_reasons = []
-        final_score = score
         
-        # --- RÈGLE 1 : LA BARRIÈRE DES MATHS (Renforcée) ---
-        # Si utilisateur < Intermédiaire, on TUE le score des métiers scientifiques
-        math_heavy_jobs = ["Scientist", "Research", "Financial", "Algorithm", "RAG", "Generative", "Vision", "NLP"]
-        user_math_weak = filters.get('math_level') in ["Débutant", "Notions"]
+        # --- EXIGENCE STEP 1 : DÉFINITION DES BLOCS DE COMPÉTENCES ---
+        # On définit ce que signifie sémantiquement chaque bloc
+        self.competency_blocks = {
+            "Data Analysis": "Nettoyage de données, visualisation, dashboard, statistiques, SQL, Excel, interprétation business",
+            "Machine Learning": "Modèles prédictifs, regression, classification, scikit-learn, algorithmes, entrainement modèle",
+            "Data Engineering": "Infrastructure, cloud, pipeline, ETL, big data, spark, hadoop, base de données, automatisation",
+            "NLP & GenAI": "Texte, langage naturel, LLM, transformers, chatbot, hugging face, embeddings",
+            "Soft Skills": "Communication, gestion de projet, présentation, éthique, travail d'équipe, curiosité"
+        }
         
-        if user_math_weak and any(keyword in row['titre'] for keyword in math_heavy_jobs):
-            # Avant : penalty = 0.25
-            penalty = 0.60 # ÉNORME MALUS (-60%)
-            final_score -= penalty
-            debug_reasons.append("⛔ Bloqué par le niveau Maths (-60%)")
+        # On pré-calcule les embeddings des définitions des blocs
+        self.block_embeddings = {
+            name: self.model.encode([desc]) 
+            for name, desc in self.competency_blocks.items()
+        }
 
-        # --- RÈGLE 2 : LA BARRIÈRE DU CODE (Renforcée) ---
-        code_heavy_jobs = ["Engineer", "Developer", "Architect", "Backend", "Fullstack"]
-        user_code_weak = filters.get('code_level', 5) < 3 # Si moins de 3/5
+    def calculate_block_scores(self, user_text):
+        """
+        EXIGENCE STEP 3 : Calculer la similarité entre l'utilisateur et CHAQUE bloc.
+        Renvoie un dictionnaire : {'Data Analysis': 0.85, 'NLP': 0.40 ...}
+        """
+        user_emb = self.model.encode([user_text])
+        scores = {}
         
-        if user_code_weak and any(keyword in row['titre'] for keyword in code_heavy_jobs):
-            penalty = 0.50 # GROS MALUS (-50%)
-            final_score -= penalty
-            debug_reasons.append("⛔ Bloqué par le niveau Code (-50%)")
-
-        # RÈGLE 3 : Le Bonus de Domaine
-        # Si le métier contient le mot du domaine préféré, petit boost
-        fav_domain = filters.get('domain', '')
-        if fav_domain != "Peu importe":
-            # Simplification : on regarde si des mots clés du domaine sont dans le titre
-            keywords_domain = {
-                "Développement & Code": ["Developer", "Engineer"],
-                "Analyse & Business": ["Analyst", "Consultant", "BI", "Product"],
-                "Infrastructure & Cloud": ["Cloud", "Architect", "Reliability"],
-                "Mathématiques & Recherche": ["Scientist", "Research"],
-                "Éthique & Gouvernance": ["Ethicist", "Steward", "DPO", "Governance"]
-            }
+        for name, block_emb in self.block_embeddings.items():
+            sim = cosine_similarity(user_emb, block_emb)[0][0]
+            scores[name] = max(0, float(sim)) # On garde le score positif
             
-            target_keywords = keywords_domain.get(fav_domain, [])
-            if any(k in row['titre'] for k in target_keywords):
-                final_score += 0.10 # +10%
-                debug_reasons.append("🚀 Bonus Domaine (+10%)")
+        return scores
 
-        return final_score, debug_reasons
+    def get_job_weights(self, job_title):
+        """
+        Définit les POIDS (Wi) pour la formule du STEP 4.
+        Comme nous n'avons pas les poids dans le JSON, on les déduit du titre.
+        """
+        # Poids par défaut (équilibré)
+        weights = {k: 1.0 for k in self.competency_blocks}
+        
+        title = job_title.lower()
+        
+        if "scientist" in title:
+            weights["Machine Learning"] = 2.0
+            weights["Data Analysis"] = 1.5
+            weights["NLP & GenAI"] = 1.2
+        elif "analyst" in title or "bi" in title:
+            weights["Data Analysis"] = 2.5
+            weights["Soft Skills"] = 1.5
+            weights["Machine Learning"] = 0.5
+        elif "engineer" in title or "architect" in title:
+            weights["Data Engineering"] = 2.5
+            weights["Machine Learning"] = 0.8
+        elif "nlp" in title or "generative" in title:
+            weights["NLP & GenAI"] = 3.0
+            weights["Machine Learning"] = 1.5
+            
+        return weights
+
+    def apply_business_rules(self, job_title, base_score, filters):
+        """
+        Vos règles métiers existantes (Bonus/Malus).
+        Elles s'appliquent EN PLUS du score sémantique théorique.
+        """
+        final_score = base_score
+        reasons = []
+        
+        # --- RÈGLE 1 : MATHS ---
+        math_heavy = ["Scientist", "Research", "Algorithm", "Vision", "NLP"]
+        if filters.get('math_level') in ["Débutant", "Notions"] and any(k in job_title for k in math_heavy):
+            final_score -= 0.60
+            reasons.append("⛔ Bloqué par le niveau Maths (-60%)")
+
+        # --- RÈGLE 2 : CODE ---
+        code_heavy = ["Engineer", "Developer", "Architect", "Backend"]
+        if filters.get('code_level', 5) < 3 and any(k in job_title for k in code_heavy):
+            final_score -= 0.50
+            reasons.append("⛔ Bloqué par le niveau Code (-50%)")
+
+        # --- RÈGLE 3 : DOMAINE ---
+        fav_domain = filters.get('domain', '')
+        # (Simplifié pour l'exemple)
+        if fav_domain != "Peu importe" and fav_domain[:4] in job_title:
+             final_score += 0.10
+             reasons.append("🚀 Bonus Domaine (+10%)")
+             
+        return final_score, reasons
 
     def find_top_matches(self, user_text, df_jobs, filters=None, top_k=3):
-        # 1. Calcul SBERT (Comme avant)
-        user_embedding = self.model.encode([user_text])
-        job_descriptions = df_jobs['description_semantique'].tolist()
-        job_embeddings = encode_jobs(self.model, job_descriptions)
+        # 1. Calculer le "Profil de Compétences" (Si pour chaque bloc)
+        # C'est l'exigence "Générer un profil pour l'utilisateur"
+        block_scores = self.calculate_block_scores(user_text)
         
-        semantic_scores = cosine_similarity(user_embedding, job_embeddings)[0]
-        
-        # 2. Application du Scoring Hybride
         hybrid_results = []
         
-        for idx, score in enumerate(semantic_scores):
-            row = df_jobs.iloc[idx]
+        for _, row in df_jobs.iterrows():
+            job_title = row['titre']
             
-            # Appel de la fonction de règles
-            final_score, reasons = self.apply_business_rules(row, score, filters or {})
+            # 2. Récupérer les poids (Wi) pour ce métier
+            weights = self.get_job_weights(job_title)
+            
+            # 3. Appliquer la FORMULE DU STEP 4 : Somme(Wi * Si) / Somme(Wi)
+            numerator = sum(weights[block] * block_scores[block] for block in self.competency_blocks)
+            denominator = sum(weights.values())
+            
+            coverage_score = numerator / denominator
+            
+            # 4. Appliquer vos Règles Métiers (Bonus/Malus)
+            final_score, reasons = self.apply_business_rules(job_title, coverage_score, filters or {})
             
             hybrid_results.append({
-                "titre": row['titre'],
-                "original_score": float(score),
+                "titre": job_title,
                 "score": float(final_score),
+                "original_score": float(coverage_score), # Le score purement sémantique
+                "block_scores": block_scores, # On garde le détail pour les graphiques !
                 "description": row['description_semantique'],
                 "competences": row['competences_cles'],
-                "reasons": reasons # On garde les explications pour l'affichage
+                "reasons": reasons
             })
             
-        # 3. Tri sur le NOUVEAU score hybride
-        # On trie la liste de dictionnaires par la clé 'score'
+        # Tri
         hybrid_results.sort(key=lambda x: x['score'], reverse=True)
-        
         return hybrid_results[:top_k]
