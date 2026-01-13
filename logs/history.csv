@@ -1,32 +1,25 @@
-timestamp;user_profile_raw;is_augmented;domain_pref;tech_skills;level_code;level_math;recommended_job;match_score
-2026-01-10 23:11:32;"Je rêve de travailler dans l'Intelligence Artificielle et de créer des robots comme ChatGPT. C'est ma passion absolue.""";False;Peu importe;Excel;1;Débutant;Développeur Python Data Confirmé;0.391
-2026-01-12 08:25:27;J'adore coder des modèle en machine learning avec Python, et j'aime aussi le développement web pour créer sites web;False;Développement & Code;C++, Databricks, PyTorch;4;Expert;Développeur Python Data Confirmé;0.7055
-2026-01-12 08:46:55;J'adore coder des modèle en machine learning avec Python, et j'aime aussi le développement web pour créer sites web;False;Développement & Code;C++, Databricks, PyTorch;4;Expert;Développeur Python Data Junior;0.4841
-2026-01-12 10:43:43;Je rêve de travailler dans l'Intelligence Artificielle et de créer des robots comme ChatGPT. C'est ma passion absolue.;False;Peu importe;Excel;1;Débutant;Data Analyst Junior;0.3683
-2026-01-12 11:34:12;fr;J'aime le code et les mathématiques, et le dev web;False;Analyse & Business;Java, C++, Bash/Shell;2;Intermédiaire;Data Analyst Junior;0.4627
-2026-01-12 14:28:27;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Mathématiques & Recherche;Python, Sql, Git;Multi-Tasking;Lecturer in Mathematics and Statistics;0.4726
-2026-01-12 14:35:53;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Mathématiques & Recherche;;Lecturer in Mathematics and Statistics;0.4573
-2026-01-12 14:36:14;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Mathématiques & Recherche;Python, Sql, Aws;Lecturer in Mathematics and Statistics;0.4797
-2026-01-12 14:44:35;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Infrastructure & Cloud;Mongodb, NLP (Traitement du langage), Networking;Infrastructure Developer- SRE;0.506
-2026-01-12 15:16:17;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Mathématiques & Recherche;Android Sdk, Angular, Animation Software, Ansible, Artifactory;Computer Research Scientist;0.4263
-2026-01-12 15:23:01;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Infrastructure & Cloud;Android Sdk, Angular, Animation Software, Ansible, Artifactory, Algorithms;MAINFRAME DEVELOPER;0.5084
-2026-01-12 15:28:07;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Infrastructure & Cloud;Android Sdk, Angular, Animation Software, Ansible, Artifactory, Algorithms;MAINFRAME DEVELOPER;0.5084
-2026-01-12 15:28:13;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Infrastructure & Cloud;Android Sdk, Angular, Animation Software, Ansible, Artifactory, Algorithms;MAINFRAME DEVELOPER;0.5084
-2026-01-12 15:28:36;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Infrastructure & Cloud;Alerting, Algorithms, Android Sdk;MAINFRAME DEVELOPER;0.4983
-2026-01-12 15:28:52;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Infrastructure & Cloud;Alerting, Algorithms, Android Sdk;MAINFRAME DEVELOPER;0.4983
-2026-01-12 15:28:57;fr;;True;Peu importe;;Computer Research Scientist;0.2404
-2026-01-12 15:29:51;fr;;True;Peu importe;;Computer Research Scientist;0.2404
-2026-01-12 15:34:54;fr;;True;Peu importe;;Computer Research Scientist;0.2404
-2026-01-12 15:35:01;fr;;True;Peu importe;;Computer Research Scientist;0.2404
-2026-01-12 15:40:14;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Mathématiques & Recherche;Alerting, Algorithms, Méthodes Agiles, Android Sdk, 3D Modeling;Computer Research Scientist;0.429
-2026-01-12 15:44:19;fr;J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python;False;Mathématiques & Recherche;Alerting, Algorithms, Méthodes Agiles, Android Sdk, 3D Modeling;Computer Research Scientist;0.429
-2026-01-12 19:46:14.806696,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Computer Research Scientist,0.42407671763346744
-2026-01-12 20:14:10.517638,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Robotics Engineer,0.49938110800889823
-2026-01-12 21:23:50.859667,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Computer Research Scientist,0.4357677766909966
-2026-01-13 09:41:22.922530,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,DATA SCIENTIST,0.5374912197773273
-2026-01-13 10:02:29.294540,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Lead Data Scientist,0.92
-2026-01-13 10:04:27.526988,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Lead Data Scientist,0.92
-2026-01-13 10:08:55.187604,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Computer Research Scientist,0.43874674806228053
-2026-01-13 10:24:15.595983,fr,J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python.,Robotics Engineer,0.4477827516885904
-2026-01-13 10:37:32.129484,fr,"J'aime tout ce qui est en rapport des systèmes embarqués et électroniques, et l'intelligence artificielle. La kinématique et la mécanique.",Robotics Engineer,0.5063419309946207
-2026-01-13 10:41:58.261898,fr,"J'aime tout ce qui est en rapport des systèmes embarqués et électroniques, et l'intelligence artificielle. La kinématique et la mécanique.",Robotics Engineer,0.5063419309946207
+timestamp,user_profile_raw,is_augmented,domain_pref,tech_skills,level_code,level_math,top_match_job,match_score,language
+2026-01-13 10:59:56,"J'aime tout ce qui est en rapport des systèmes embarqués et électroniques, et l'intelligence artificielle. La kinématique et la mécanique.",False,Robotics,"Python, C++, 3D Modeling, Algorithms, Machine Learning, Deep Learning",5,4,Robotics Engineer,0.5063419309946207,fr
+2026-01-13 11:06:35,"J'aime tout ce qui est en rapport des systèmes embarqués et électroniques, et l'intelligence artificielle. La kinématique et la mécanique.",False,Robotics,"3D Modeling, Algorithms, C++, Deep Learning, Machine Learning, Python",5,4,Robotics Engineer,0.5063419309946207,"⚠️ Erreur IA (Quota ou Modèle) : 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite
+Please retry in 28.39294662s. [links {
+  description: ""Learn more about Gemini API quotas""
+  url: ""https://ai.google.dev/gemini-api/docs/rate-limits""
+}
+, violations {
+  quota_metric: ""generativelanguage.googleapis.com/generate_content_free_tier_requests""
+  quota_id: ""GenerateRequestsPerDayPerProjectPerModel-FreeTier""
+  quota_dimensions {
+    key: ""model""
+    value: ""gemini-2.5-flash-lite""
+  }
+  quota_dimensions {
+    key: ""location""
+    value: ""global""
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 28
+}
+]","[{'titre': 'Robotics Engineer', 'score': 0.5063419309946207, 'original_score': 0.4063419309946207, 'block_scores': {'Data Analysis': 0.35783594846725464, 'Machine Learning': 0.4435703158378601, 'Data Engineering': 0.42160019278526306, 'NLP & GenAI': 0.38847339153289795, 'Soft Skills': 0.39734241366386414}, 'description': 'Designs robotic systems by developing software/hardware components that enable robots to perform tasks autonomously or semi-autonomously.', 'skills': ['Robotics', 'C++', 'Python', 'ROS', 'Embedded Systems', 'Control Systems', 'Sensors', 'Actuators'], 'reasons': ['🚀 Bonus Domaine (+10%)']}, {'titre': 'Ansible Operations Engineer', 'score': 0.4063419309946207, 'original_score': 0.4063419309946207, 'block_scores': {'Data Analysis': 0.35783594846725464, 'Machine Learning': 0.4435703158378601, 'Data Engineering': 0.42160019278526306, 'NLP & GenAI': 0.38847339153289795, 'Soft Skills': 0.39734241366386414}, 'description': 'Focuses on automating IT processes using Ansible. Responsibilities include writing playbooks, managing configurations, and ensuring system reliability.', 'skills': ['Ansible', 'Linux', 'Automation', 'Cloud Platforms', 'CI/CD', 'Infrastructure as Code', 'Kubernetes', 'Docker', 'AWS', 'Terraform', 'Python', 'Scripting', 'Networking'], 'reasons': []}, {'titre': 'Artificial intelligence Architect', 'score': 0.4063419309946207, 'original_score': 0.4063419309946207, 'block_scores': {'Data Analysis': 0.35783594846725464, 'Machine Learning': 0.4435703158378601, 'Data Engineering': 0.42160019278526306, 'NLP & GenAI': 0.38847339153289795, 'Soft Skills': 0.39734241366386414}, 'description': 'Designs AI systems and architecture. Responsible for selecting appropriate technologies, ensuring scalability, and integrating AI solutions into existing systems.', 'skills': ['AI Architecture', 'Machine Learning', 'Cloud Computing', 'Data Science', 'Deep Learning', 'System Design', 'AWS', 'Azure', 'Scalability', 'Security', 'Model Deployment'], 'reasons': []}]",fr

@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import os
+import ast
 from datetime import datetime
 from collections import Counter
 
@@ -11,7 +12,7 @@ from collections import Counter
 # ============================================================
 from modules.data_loader import load_data
 from modules.nlp_engine import SemanticMatcher
-from modules.genai_engine import augment_short_text, translate_to_french
+from modules.genai_engine import augment_short_text, translate_to_french, generate_career_advice
 
 # --- 1. CONFIG ---
 st.set_page_config(
@@ -25,21 +26,18 @@ st.set_page_config(
 if 'lang_choice' not in st.session_state:
     st.session_state.lang_choice = 'FR' 
 
-# Mise à jour de la variable utilisée par le système de traduction
 st.session_state.language = 'fr' if st.session_state.lang_choice == 'FR' else 'en'
 
-# --- 2. CSS "LIQUID BRUTALISM" ---
+# --- 2. CSS "LIQUID BRUTALISM" (INCHANGÉ) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700;800&display=swap');
 
-    /* --- GLOBAL FONT SIZE --- */
     html, body, [class*="css"] {
         font-family: 'Space Grotesk', sans-serif;
         font-size: 16px; 
     }
 
-    /* --- FOND LIQUID MOTION --- */
     .stApp {
         background-image: 
             radial-gradient(at 40% 20%, rgba(18, 36, 219, 0.5) 0px, transparent 50%),
@@ -59,14 +57,12 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* LARGEUR DE PAGE */
     .block-container {
         padding-top: 6rem !important; 
         padding-bottom: 5rem;
         max-width: 1400px; 
     }
 
-    /* --- CONTENEURS BLANCS SOLIDES --- */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background: #FFFFFF !important;
         border: 3px solid #000000;
@@ -82,7 +78,6 @@ st.markdown("""
         box-shadow: 12px 12px 0px 0px #000000;
     }
 
-    /* TYPOGRAPHIE TITRES */
     h1, h2, h3, h4 {
         color: #000000 !important;
         font-weight: 800;
@@ -92,7 +87,6 @@ st.markdown("""
     h3 { font-size: 1.6rem !important; }
     h4 { font-size: 1.4rem !important; margin-bottom: 20px !important; }
 
-    /* --- HEADER --- */
     .hero-box {
         background-color: #1224DB !important;
         border: 3px solid black;
@@ -109,7 +103,6 @@ st.markdown("""
     }
     .hero-box h1, .hero-box h3, .hero-box p { color: #FFFFFF !important; }
 
-    /* --- BOUTON D'ACTION --- */
     div.stButton > button {
         background-color: #1224DB;
         color: white;
@@ -132,7 +125,6 @@ st.markdown("""
         transform: translate(-3px, -3px);
     }
 
-    /* --- INPUTS UNIFORMES --- */
     .stTextArea textarea, 
     .stSelectbox div[data-baseweb="select"] > div,
     .stMultiSelect div[data-baseweb="select"] > div {
@@ -143,7 +135,6 @@ st.markdown("""
         min-height: 50px;
     }
 
-    /* SLIDERS */
     div[data-baseweb="slider"] div[class*="thumb"] {
         background-color: #000000 !important;
         border: 2px solid white;
@@ -157,7 +148,6 @@ st.markdown("""
         background-color: #000000 !important;
     }
 
-    /* RADIO BUTTONS */
     div[role="radiogroup"] {
         background: white;
         border: 2px solid black;
@@ -166,7 +156,6 @@ st.markdown("""
         display: inline-flex;
     }
 
-    /* --- BADGES COMPETENCES --- */
     .brut-tag {
         background-color: #1224DB;
         color: white;
@@ -186,7 +175,6 @@ st.markdown("""
         box-shadow: 6px 6px 0px black;
     }
     
-    /* Coach Box */
     .coach-box {
         background-color: #FFFFFF; 
         border: 3px solid black; 
@@ -198,7 +186,6 @@ st.markdown("""
         margin-bottom: 40px;
     }
     
-    /* CARTE JOB */
     .job-card {
         border: 3px solid black; 
         padding: 20px; 
@@ -300,7 +287,7 @@ TRANS = {
         * Strict validation of Math/Code levels to prevent hallucinations.
         
         **4. GENAI (Google Gemini)**
-        * **Augmentation:** Automatic enrichment of short user inputs.
+        * **Augmentation:** Enrichment of short user inputs.
         * **Coaching:** Gap Analysis and actionable learning paths.
         * **Translation:** Real-time translation of job descriptions.
         """,
@@ -335,7 +322,6 @@ top_skills.sort()
 
 # --- FONCTIONS VIZ ---
 def plot_radar_brut(axes, scores):
-    # Changement VERT -> BLEU Transparent (#1224DB)
     fig = go.Figure(data=go.Scatterpolar(
         r=list(scores) + [scores[0]], theta=axes + [axes[0]],
         fill='toself', fillcolor='rgba(18, 36, 219, 0.4)', 
@@ -357,7 +343,7 @@ def plot_radar_brut(axes, scores):
 def plot_heatmap_brut(axes, scores):
     fig = go.Figure(data=go.Heatmap(
         z=[scores], x=axes, y=['SCORE'],
-        colorscale=[[0, 'white'], [1, '#D61519']], # Ajustement au Rouge Thème
+        colorscale=[[0, 'white'], [1, '#D61519']],
         showscale=False, texttemplate="%{z:.0%}",
         textfont={"size":14}
     ))
@@ -404,9 +390,7 @@ def plot_skill_gap(user_skills_list, top_jobs_skills):
     user_vals = [1 if s in user_skills_list else 0.1 for s in skills_ax]
 
     fig = go.Figure(data=[
-        # Top Jobs en BLEU (#1224DB)
         go.Bar(name='Top Jobs', x=skills_ax, y=job_vals, marker_color='#1224DB', marker_line=dict(color='black', width=2)),
-        # Vous (Utilisateur) en ROUGE (#D61519) au lieu du vert
         go.Bar(name='Vous', x=skills_ax, y=user_vals, marker_color='#D61519', marker_line=dict(color='black', width=2))
     ])
     fig.update_layout(
@@ -422,18 +406,110 @@ def plot_skill_gap(user_skills_list, top_jobs_skills):
 
 
 def get_axes_data(text, model):
-    # Changement "Biz" -> "Business"
     axes = ["Data", "Code", "Business", "Cloud", "IA"]
     user_emb = model.encode([text])
     axes_emb = model.encode(axes)
     scores = cosine_similarity(user_emb, axes_emb)[0]
     return axes, scores
 
-def save_log(u_text, filters, job, score, aug):
-    if not os.path.exists("logs"): os.makedirs("logs")
-    pd.DataFrame([{
-        "date": datetime.now(), "lang": st.session_state.language, "input": u_text, "job": job, "score": score
-    }]).to_csv("logs/history.csv", mode='a', header=not os.path.exists("logs/history.csv"), index=False)
+# --- FONCTIONS DE CACHE ET SAUVEGARDE (OPTIMISÉES) ---
+CSV_FILE = "logs/history.csv"
+
+def check_cache(u_text, filters):
+    """
+    Vérifie si une requête similaire existe déjà dans history.csv
+    Retourne le tuple (found: bool, results: dict ou None, advice: str ou None)
+    """
+    if not os.path.exists(CSV_FILE):
+        return False, None, None
+
+    try:
+        hist_df = pd.read_csv(CSV_FILE)
+        if hist_df.empty: return False, None, None
+
+        # On standardise les inputs pour la comparaison
+        current_skills = sorted(filters.get('skills', []))
+        current_domain = filters.get('domain', 'N/A')
+        current_lvl_c = filters.get('code_level', 0)
+        current_lvl_m = filters.get('math_level', 0)
+        current_text = u_text.strip()
+
+        # On itère sur le dataframe (du plus récent au plus ancien idéalement)
+        for _, row in hist_df.iterrows():
+            # Comparaison stricte
+            # Note: il faut gérer le fait que tech_skills est une string dans le CSV
+            cached_skills_str = str(row['tech_skills']) if pd.notna(row['tech_skills']) else ""
+            cached_skills = sorted([s.strip() for s in cached_skills_str.split(',') if s.strip()])
+            
+            if (row['user_profile_raw'].strip() == current_text and
+                row['domain_pref'] == current_domain and
+                cached_skills == current_skills and
+                row['level_code'] == current_lvl_c and
+                row['level_math'] == current_lvl_m):
+                
+                # BINGO - CACHE HIT
+                # On reconstruit l'objet 'results' (liste de dicts) depuis le CSV
+                # Attention : le CSV stocke tout à plat, il faut parser.
+                # Pour simplifier ici, on suppose que 'results_json' contient les jobs en format JSON string
+                # Ou on reconstruit à la volée si on a stocké job1, job2, job3.
+                
+                # Méthode simple : on retourne les données brutes stockées
+                cached_results = []
+                try:
+                    # On suppose qu'on a stocké la liste complète des résultats dans une colonne 'full_results_json'
+                    # Si elle n'existe pas (anciens logs), on ne peut pas utiliser le cache pour l'affichage complet
+                    if 'full_results_json' in row and pd.notna(row['full_results_json']):
+                        cached_results = ast.literal_eval(row['full_results_json'])
+                except:
+                    pass
+                
+                cached_advice = row['coach_advice'] if 'coach_advice' in row else None
+                
+                if cached_results and cached_advice:
+                    return True, cached_results, cached_advice
+                    
+    except Exception as e:
+        print(f"Erreur cache: {e}")
+        return False, None, None
+
+    return False, None, None
+
+def save_log(u_text, filters, results, advice, aug):
+    """
+    Sauvegarde enrichie avec les résultats complets
+    """
+    # Préparation des données aplaties
+    top_job = results[0]['titre'] if results else "N/A"
+    top_score = results[0]['score'] if results else 0
+    
+    # On stocke la liste complète des résultats sous forme de chaîne pour pouvoir la relire
+    # (Attention : c'est lourd, mais c'est le seul moyen de tout cacher dans un CSV simple)
+    results_str = str(results)
+
+    log_data = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "user_profile_raw": u_text.strip(),
+        "is_augmented": aug,
+        "domain_pref": filters.get('domain', 'N/A'),
+        "tech_skills": ", ".join(sorted(filters.get('skills', []))),
+        "level_code": filters.get('code_level', 0),
+        "level_math": filters.get('math_level', 0),
+        
+        # Données de sortie
+        "top_match_job": top_job,
+        "match_score": top_score,
+        "coach_advice": advice,          # On sauvegarde le texte du coach
+        "full_results_json": results_str, # On sauvegarde toute la structure des résultats
+        
+        "language": st.session_state.language
+    }
+    
+    df_new = pd.DataFrame([log_data])
+    
+    if not os.path.exists(CSV_FILE):
+        df_new.to_csv(CSV_FILE, index=False)
+    else:
+        df_new.to_csv(CSV_FILE, mode='a', header=False, index=False)
 
 # =========================================================
 #                       HEADER
@@ -522,25 +598,47 @@ with st.container(border=True):
         """, unsafe_allow_html=True)
     
     else:
-        # LOGIQUE REELLE
-        full_text = user_story
-        is_aug = False
-        
-        if len(user_story.split()) < 5 and user_story.strip() != "":
-             with st.spinner("BOOST..."):
-                full_text = augment_short_text(user_story, st.session_state.language)
-                is_aug = True
-
-        ctx = f"{full_text}. Skills: {', '.join(skills)}. Domain: {domain}. Level Code: {lvl_code}/5. Level Math: {lvl_math}/5."
+        # LOGIQUE REELLE + CACHE
         filters = {"math_level": lvl_math, "code_level": lvl_code, "domain": domain, "skills": skills}
         
-        matcher = SemanticMatcher()
-        with st.spinner(t('loading')):
-            results = matcher.find_top_matches(ctx, df, filters=filters, top_k=3)
+        # 1. VERIFICATION DU CACHE
+        is_cached, cached_results, cached_advice = check_cache(user_story, filters)
         
-        if results and user_story.strip() != "":
-             save_log(user_story, filters, results[0]['titre'], results[0]['score'], is_aug)
+        if is_cached:
+            st.success("⚡ Résultat récupéré du cache (History) !")
+            results = cached_results
+            advice = cached_advice
+            is_aug = False # Pas pertinent si cache
+            full_text = user_story # Pas d'augmentation si cache
+            # On recrée juste le context pour les graphiques
+            ctx = f"{user_story}. Skills: {', '.join(skills)}. Domain: {domain}. Level Code: {lvl_code}/5."
+            matcher = SemanticMatcher() # Besoin du matcher juste pour les embeddings des graphs
+            
+        else:
+            # 2. CALCUL (SI PAS EN CACHE)
+            full_text = user_story
+            is_aug = False
+            
+            if len(user_story.split()) < 5 and user_story.strip() != "":
+                 with st.spinner("BOOST..."):
+                    full_text = augment_short_text(user_story, st.session_state.language)
+                    is_aug = True
+    
+            ctx = f"{full_text}. Skills: {', '.join(skills)}. Domain: {domain}. Level Code: {lvl_code}/5. Level Math: {lvl_math}/5."
+            
+            matcher = SemanticMatcher()
+            with st.spinner(t('loading')):
+                results = matcher.find_top_matches(ctx, df, filters=filters, top_k=3)
+            
+            # Génération Coach
+            with st.spinner(t('ia_loading')):
+                advice = generate_career_advice(ctx, results[0]['titre'], results[0]['description'], filters, st.session_state.language)
+            
+            # 3. SAUVEGARDE ENRICHIE
+            if results and user_story.strip() != "":
+                 save_log(user_story, filters, results, advice, is_aug)
 
+        # AFFICHAGE (Le code d'affichage reste identique)
         # 1. LISTE DES JOBS (EN 3 COLONNES)
         st.markdown(f"#### TOP MATCHES")
         st.write("")
@@ -553,14 +651,12 @@ with st.container(border=True):
                     title = res['titre']
                     desc = res['description']
                     
-                    # LOGIQUE DE TRADUCTION AVEC VÉRIFICATION DE LA VARIABLE MISE À JOUR
-                    if st.session_state.lang_choice == 'FR': # Utilisation explicite du choix
+                    if st.session_state.lang_choice == 'FR':
                         title = translate_to_french(title)
                         desc = translate_to_french(desc)
                     
                     score_pct = int(res.get('score', 0)*100)
                     
-                    # CORRECTION PADDING ET STRUCTURE
                     st.markdown(f"""
                     <div class="job-card">
                         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:10px;">
@@ -578,37 +674,13 @@ with st.container(border=True):
 
         st.markdown("---")
 
-        # 2. ANALYSE STRATÉGIQUE (CONTENU ÉTOFFÉ, NETTOYÉ DE LA BALISE </div>)
+        # 2. ANALYSE STRATÉGIQUE
         st.markdown(f"#### {t('coach')}")
         
-        # Texte augmenté (30-35 lignes environ)
-        structured_advice = """
-**1. DIAGNOSTIC DU PROFIL & POSITIONNEMENT**
-Votre profil présente une ossature technique robuste, caractérisée par une dominante claire en développement logiciel backend et des bases mathématiques académiques. Le modèle détecte une excellente adéquation (Match > 85%) avec les rôles de R&D pure, mais note un déficit critique sur les technologies de déploiement modernes (CI/CD, Cloud Native) par rapport aux standards "Senior" du marché actuel. 
-
-Votre score sur l'axe "Business" (3%) indique une approche très technicienne, ce qui est un atout pour l'expertise pure mais peut freiner votre évolution vers des rôles de Tech Lead ou d'Architecte si vous ne développez pas une vision plus "Produit".
-
-**2. PLAN DE MONTÉE EN COMPÉTENCE (GAP ANALYSIS)**
-* **Court Terme (Tech & Data) :**
-    * Consolidez votre maîtrise des pipelines ETL (Extract, Transform, Load). Le marché demande plus que de la modélisation : il faut savoir traiter la donnée brute et sale.
-    * Renforcez vos acquis en SQL avancé (Window Functions, CTEs) qui restent le "pain quotidien" des Data Scientists en entreprise.
-
-* **Moyen Terme (Industrialisation & Cloud) :**
-    * C'est votre principal axe d'amélioration. Apprenez à packager vos modèles (Docker) et à les orchestrer (Kubernetes ou Services Managés Cloud comme SageMaker/Vertex AI).
-    * Familiarisez-vous avec les concepts de MLOps (MLflow, DVC) pour passer du "Notebook expérimental" à la "Production fiable".
-
-* **Soft Skills & Stratégie :**
-    * Travaillez votre "Data Storytelling". Savoir expliquer l'impact business (ROI) d'un algorithme est aussi crucial que sa précision (Accuracy).
-
-**3. PLAN D'ACTIONS TACTIQUE (3 MOIS)**
-1.  **Mois 1 (Fondations) :** Suivre une formation certifiante cloud (ex: AWS Cloud Practitioner ou Azure Fundamentals) pour combler le gap lexical immédiatement.
-2.  **Mois 2 (Pratique) :** Réaliser un projet "End-to-End" personnel : Scrapper des données, entraîner un modèle simple, et surtout l'exposer via une API (FastAPI) hébergée sur un service gratuit (Railway/Render).
-3.  **Mois 3 (Visibilité) :** Documenter ce projet sur Github avec un Readme orienté "résolution de problème" et non juste "code", puis participer à un hackathon pour valider vos compétences en équipe.
-"""
-        # Utilisation propre de st.markdown pour éviter les artefacts HTML
+        # On utilise la variable 'advice' (récupérée du cache ou calculée)
         st.markdown(f"""
         <div class="coach-box">
-        {structured_advice}
+        {advice}
         </div>
         """, unsafe_allow_html=True)
         
@@ -634,7 +706,6 @@ Votre score sur l'axe "Business" (3%) indique une approche très technicienne, c
 
         st.write("")
 
-        # Graphiques additionnels
         c_v3, c_v4 = st.columns(2)
         with c_v3:
             st.markdown("**Performance Globale**")
