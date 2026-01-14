@@ -18,8 +18,7 @@ class SemanticMatcher:
             "Data Analysis": "Nettoyage de données, visualisation, dashboard, statistiques, SQL, Excel, interprétation business",
             "Machine Learning": "Modèles prédictifs, regression, classification, scikit-learn, algorithmes, entrainement modèle",
             "Data Engineering": "Infrastructure, cloud, pipeline, ETL, big data, spark, hadoop, base de données, automatisation",
-            "NLP & GenAI": "Texte, langage naturel, LLM, transformers, chatbot, hugging face, embeddings",
-            "Soft Skills": "Communication, gestion de projet, présentation, éthique, travail d'équipe, curiosité"
+            "NLP & GenAI": "Texte, langage naturel, LLM, transformers, chatbot, hugging face, embeddings"
         }
         
         # Pré-calcul des embeddings des blocs

@@ -1,129 +1,182 @@
-### https://aistudio.google.com/app/api-keys
+# 🧬 AISCA - Agent Intelligent Sémantique & Génératif
 
-### 🧪 Test 1 : Le "Data Scientist" Idéal (Happy Path)
+![AISCA Logo](LOGO_AISCA.png)
 
-*Ce test vérifie que le matching simple fonctionne quand tout est aligné.*
+> **Cartographie des Compétences . Analyse RAG . Coaching IA**
 
-* **Texte (Histoire) :** "J'adore les statistiques et les probabilités. Mon but est de créer des modèles prédictifs complexes pour anticiper des comportements futurs. Je code tous les jours en Python."
-* **Domaine :** Mathématiques & Recherche
-* **Compétences cochées :** Python, SQL, Git
-* **Slider Code :** 5/5
-* **Slider Maths :** Expert
-* **👉 Résultat attendu :**
-  * **Métier :** *Data Scientist Senior* ou  *Machine Learning Engineer* .
-  * **Score :** Très haut (> 80%).
-  * **Gemini :** Doit dire un truc du genre : *"Votre profil technique est parfait, foncez !"*
+**AISCA** (AI Skills & Career Agent) est une application intelligente d'orientation professionnelle pour l'écosystème Tech & Data. Elle combine **l'analyse sémantique locale** (SBERT) et **l'IA Générative** (Google Gemini) au sein d'une architecture **RAG** (Retrieval-Augmented Generation) pour matcher les profils aux opportunités réelles.
 
 ---
 
-### 🧪 Test 2 : Le "Data Analyst" (Business & Visuel)
+## 📋 Contexte
 
-*Ce test vérifie que l'IA distingue bien l'analyse (Viz) de la science (Maths).*
+Projet réalisé dans le cadre de la certification **"Expert en Ingénierie de Données" (Bloc 2)**.
+**Objectif :** Concevoir une solution "End-to-End" (Data Engineering + NLP + GenAI + UI) pour résoudre la problématique du matching sémantique de compétences.
 
-* **Texte (Histoire) :** "Je ne suis pas un grand codeur, mais j'aime faire parler les chiffres pour aider les managers à décider. J'adore créer des tableaux de bord interactifs et visuels pour raconter une histoire avec la donnée."
-* **Domaine :** Analyse & Business
-* **Compétences cochées :** Excel, PowerBI, SQL
-* **Slider Code :** 2/5
-* **Slider Maths :** Intermédiaire
-* **👉 Résultat attendu :**
-  * **Métier :** *Data Analyst* ou  *Consultant BI* .
-  * **Gemini :** Doit mettre l'accent sur votre capacité de "Storytelling" et l'utilisation d'outils comme PowerBI.
+## 🚀 Fonctionnalités Clés
 
----
+* **🔍 Moteur Sémantique (NLP Local) :** Vectorisation SBERT et calcul de similarité cosinus (sans mot-clé exact).
+* **🧠 Architecture RAG & GenAI :** Enrichissement des bios, traduction contextuelle et coaching personnalisé via Google Gemini.
+* **🛡️ Filtrage Hybride :** Garde-fous logiques (Niveaux Maths/Code) pour éviter les hallucinations.
+* **⚡ Performance :** Système de **Caching intelligent** (`history.csv`) et traitement In-Memory.
+* **🐳 Conteneurisation :** Déploiement facilité via Docker.
 
-### 🧪 Test 3 : Le "Crash Test" (Le fan d'IA nul en maths)
+## 📂 Structure du Projet
 
-*Ce test est CRITIQUE. Il vérifie que votre règle de pénalité (-60%) fonctionne.*
+L'architecture respecte la séparation des responsabilités (ETL, Moteur NLP, Interface).
 
-* **Texte (Histoire) :** "Je rêve de travailler dans l'Intelligence Artificielle et de créer des robots comme ChatGPT. C'est ma passion absolue."
-* **Domaine :** Peu importe
-* **Compétences cochées :** (Aucune ou juste Excel)
-* **Slider Code :** 1/5
-* **Slider Maths :** **Débutant** (⚠️ Le piège est ici)
-* **👉 Résultat attendu :**
-  * **Métier :** *Data Scientist* doit **disparaître** du top (ou avoir un score très bas rouge).
-  * **Raison affichée :** Vous devez voir le message rouge :  **⛔ Bloqué par le niveau Maths (-60%)** .
-  * **Recommandation :** L'IA devrait peut-être proposer *Data Steward* ou *Product Owner* (des métiers moins techniques).
-
----
-
-### 🧪 Test 4 : L'Architecte Cloud (L'Ingénieur pur)
-
-*Ce test vérifie le vocabulaire technique (Infrastructure).*
-
-* **Texte (Histoire) :** "Je n'aime pas trop les maths et les analyses. Ce qui me plaît, c'est de construire des tuyaux solides pour déplacer la donnée. J'aime automatiser les serveurs et gérer le cloud."
-* **Domaine :** Infrastructure & Cloud
-* **Compétences cochées :** AWS, Docker, Python
-* **Slider Code :** 4/5
-* **Slider Maths :** Notions
-* **👉 Résultat attendu :**
-  * **Métier :** *Data Engineer* ou  *Cloud Data Engineer* .
-  * **Gemini :** Doit valider le côté "Ops" et "Construction" plutôt que l'analyse.
-
-
-
- **OUI, SBERT est utilisé** , et il est le moteur central de votre application. Sans lui, aucune compréhension du sens n'est possible.
-
-Voici l'explication détaillée du fonctionnement de votre `nlp_engine.py` (version académique mise à jour), étape par étape.
-
-### 1. Le Cerveau : SBERT (`Sentence-BERT`)
-
-```python
-@st.cache_resource
-def load_model():
-    return SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+```bash
+AISCA/
+├── .streamlit/             # Configuration Streamlit
+│   └── config.toml
+├── data/
+│   ├── raw_IT_jobs/        # Données brutes (CSV Kaggle)
+│   │   └── IT_Job_Roles_Skills.csv
+│   └── filtered_it_jobs.json  # Dataset nettoyé (Source de vérité de l'app)
+├── logs/
+│   └── history.csv         # Cache & Historique des requêtes
+├── modules/                # Backend Logic
+│   ├── __init__.py
+│   ├── data_loader.py      # Pipeline ETL : Chargement & Nettoyage
+│   ├── genai_engine.py     # Connecteur Gemini (RAG, Traduction)
+│   └── nlp_engine.py       # Moteur Sémantique (SBERT, Scoring)
+├── scripts/
+│   └── generate_full_data.py # Script utilitaire de préparation des données
+├── .dockerignore
+├── .env                    # Variables d'environnement (API Key)
+├── app.py                  # Point d'entrée (Frontend Streamlit)
+├── docker-compose.yml      # Orchestration Docker
+├── Dockerfile              # Image Docker
+├── LOGO_AISCA.png          # Assets graphiques
+├── readme.md               # Documentation
+└── requirements.txt        # Dépendances Python
 ```
 
-* **C'est quoi ?** Vous utilisez le modèle `paraphrase-multilingual-MiniLM-L12-v2`.
-* **Son rôle :** C'est un  **traducteur** . Il ne traduit pas du français vers l'anglais, mais du  **Français vers les Mathématiques** .
-* **Le Vectorisation (Embedding) :** SBERT prend une phrase (ex:  *"J'aime prédire l'avenir avec des stats"* ) et la transforme en une liste de 384 nombres (un vecteur). Ces nombres représentent le **sens** de la phrase.
-* **La magie :** Deux phrases écrites différemment mais avec le même sens (ex: *"Je fais du Machine Learning"* et  *"Je crée des modèles prédictifs"* ) auront des vecteurs très proches mathématiquement.
 
-### 2. L'Étape Intermédiaire : Les Blocs de Compétences
 
-C'est la grande différence avec votre ancienne version. Au lieu de comparer directement le candidat au métier, on passe par des concepts abstraits (les Blocs).
+## ⚙️ Installation & Démarrage
 
-* **Le code :** `self.block_embeddings`
-* **L'action :** Au démarrage, le système calcule le "vecteur de référence" pour chaque bloc (Data Analysis, NLP, Soft Skills...) en utilisant leur description textuelle.
+### Option 1 : Installation Locale (Python)
 
-### 3. Le Calcul des Scores par Bloc (**S**i)
 
-Quand l'utilisateur envoie son texte, la fonction `calculate_block_scores(user_text)` s'active :
+**1. Cloner le projet :**
 
-1. Elle transforme le texte utilisateur en vecteur (grâce à SBERT).
-2. Elle mesure la **Similarité Cosinus** (l'angle) entre le vecteur utilisateur et le vecteur de chaque Bloc.
+```bash
+git clone [https://github.com/entiteco/Projet_IA_Gen_AISCA.git](https://github.com/entiteco/Projet_IA_Gen_AISCA.git)
+cd AISCA
+```
 
-**Résultat concret :**
 
-* Utilisateur : *"Je code en Python pour nettoyer des fichiers CSV."*
-* SBERT compare avec le Bloc "Data Analysis" -> Angle très faible -> Score 0.85 (85%)
-* SBERT compare avec le Bloc "NLP" -> Angle grand -> Score 0.20 (20%)
+**2. Créer un environnement virtuel :**
 
-### 4. La Recommandation Pondérée (Formule **W**i)
+```bash
+python -m venv venv
+source venv/bin/activate  # Mac/Linux
+# ou
+.\venv\Scripts\activate   # Windows
+```
 
-C'est ici que l'exigence du cahier des charges est respectée.
-La fonction `find_top_matches` ne fait plus une comparaison directe. Elle applique la formule :
 
-**S**core**=**∑**P**o**i**d**s**∑**(**P**o**i**d**s**×**S**core**Bl**oc**)
+**3. Installer les dépendances :**
 
-* **Logique :** Pour un poste de "Data Scientist", le code (`get_job_weights`) dit que le bloc "Machine Learning" pèse plus lourd (Poids = 2.0) que le bloc "Soft Skills" (Poids = 1.0).
-* L'algorithme combine donc les scores SBERT de l'utilisateur avec l'importance de chaque compétence pour le métier visé.
+```bash
+pip install -r requirements.txt
+```
 
-### 5. Les Règles Métiers (Le "Garde-Fou")
 
-Enfin, la méthode `apply_business_rules` intervient après le calcul SBERT.
-C'est une couche de **logique pure (If/Else)** qui vient corriger l'IA.
+**4. Configuration API :** Renommez `.env.example` en `.env` (ou créez-le) et ajoutez votre clé :
 
-* **Pourquoi ?** SBERT peut trouver que "J'adore la Data Science mais je suis nul en maths" ressemble sémantiquement à "Data Scientist".
-* **Le filtre :** Votre code vérifie les sliders (Niveau Maths/Code). Si le niveau est trop bas pour un métier exigeant (ex: Scientist), il applique un **MALUS brutal** (-60%) au score final.
+```bash
+GOOGLE_API_KEY="votre_cle_api_ici"
+```
+
+
+**5. Lancer l'application :**
+
+```bash
+streamlit run app.py
+```
+
+
+### Option 2 : Installation via Docker 🐳 (Recommandé)
+
+Assurez-vous d'avoir Docker et Docker Compose installés.
+
+
+**1. Configurer l'environnement :** Créez un fichier `.env` à la racine contenant :
+
+```bash
+GOOGLE_API_KEY=AIzaSyDxxxxxxxxx...
+```
+
+
+**2. Construire et lancer le conteneur :**
+
+```bash
+docker-compose up --build
+```
+
+
+**3. Accéder à l'application :** Ouvrez votre navigateur sur `http://localhost:8501`.
+
+
+## 🧪 Scénarios de Tests (Quality Assurance)
+
+Utilisez ces scénarios pour valider le comportement du moteur hybride.
+
+#### Test 1 : Le "Perfect Match" (Validation Sémantique)
+
+*Objectif : Vérifier que le moteur comprend le sens sans mots-clés exacts.*
+
+* **Bio :** "Je conçois des réseaux de neurones profonds pour analyser des images médicales. Je maîtrise l'optimisation de modèles complexes."
+* **Secteur Cible :** `Data Science`
+* **Compétences (Select) :** `Deep Learning`, `Python`, `Computer Vision`
+* **Niveaux :** Code `4/5` | Théorique `5/5`
+* **Résultat Attendu :**
+  * **Top Job :** *Computer Vision Engineer* ou  *Research Scientist* .
+  * **Score :** > 85%.
+
+#### Test 2 : Le Garde-Fou (Anti-Hallucination)
+
+*Objectif : Vérifier que les règles métiers bloquent les profils techniquement faibles.*
+
+* **Bio :** "J'adore l'intelligence artificielle, je lis beaucoup d'articles sur le sujet, c'est ma passion."
+* **Secteur Cible :** `Peu importe`
+* **Compétences (Select) :** (Laisser vide ou mettre juste `Excel`)
+* **Niveaux :** Code `1/5` | Théorique `1/5`
+* **Résultat Attendu :**
+  * **Comportement :** Les métiers "Data Scientist" ou "ML Engineer" doivent être pénalisés ou disparaître du top 3 malgré la sémantique de la bio.
+  * **Top Job :** *Data Analyst* (Junior) ou métiers moins techniques.
+
+#### Test 3 : L'Augmentation GenAI (RAG)
+
+*Objectif : Tester l'enrichissement automatique des inputs pauvres.*
+
+* **Bio :** "Je fais du sql et des bases de données." (Moins de 5 mots).
+* **Secteur Cible :** `Dev & Cloud`
+* **Compétences (Select) :** `SQL`, `Database Management`
+* **Niveaux :** Code `3/5` | Théorique `2/5`
+* **Résultat Attendu :**
+  * **Log (history.csv) :** Colonne `is_augmented` = `True`.
+  * **Matching :** Pertinent (ex: *Database Administrator* ou  *Backend Developer* ) grâce à la réécriture par Gemini.
+
+#### Test 4 : Le Cross-Domain & Traduction
+
+*Objectif : Vérifier la gestion multilingue et l'ouverture sectorielle.*
+
+* **Bio :** "J'ai géré des équipes de développeurs pendant 10 ans, je suis certifié Scrum Master et j'aime organiser les sprints."
+* **Secteur Cible :** `Management`
+* **Compétences (Select) :** `Agile Methodologies`, `Project Management`
+* **Niveaux :** Code `2/5` | Théorique `2/5`
+* **Résultat Attendu :**
+  * **Top Job :** *Technical Project Manager* ou  *Scrum Master* .
+  * **Interface :** Titre du poste traduit en FR (si Langue FR sélectionnée), mais conservation des termes techniques (ex: "Scrum Master").
 
 ---
 
-### Résumé pour le Jury
+## 👥 Auteurs
 
-Si on vous demande "Comment ça marche ?", répondez ceci :
+* **[Kévin HEUGAS]**
+* **[Valentin MASSONNIERE]**
 
-1. **Ingestion :** On utilise **SBERT** pour vectoriser le texte du candidat.
-2. **Matching Sémantique :** On compare ce vecteur à 5 **Blocs de Compétences** clés (Data Analysis, ML, etc.) pour obtenir un profil technique (ex: 80% Dev, 20% IA).
-3. **Algorithme de Pondération :** On projette ce profil sur les métiers. Chaque métier a des "poids" différents (un Data Engineer a besoin de plus de code qu'un Analyst).
-4. **Filtrage Hybride :** On applique des règles strictes (niveau maths/code) pour pénaliser les profils qui matchent sémantiquement mais n'ont pas le niveau technique requis.
+*EFREI - M1 Data Engineering & IA- 2025/2026*
