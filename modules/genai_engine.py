@@ -3,20 +3,26 @@ import google.generativeai as genai
 import streamlit as st
 
 def get_api_key():
-    """Récupère la clé API."""
+    """
+    Securely retrieves the Google API Key from Streamlit secrets or environment variables.
+    """
     try:
         return st.secrets["GOOGLE_API_KEY"]
     except:
         return os.environ.get("GOOGLE_API_KEY")
 
 def augment_short_text(short_text, language="fr"):
-    """Enrichissement des textes courts."""
+    """
+    Data Augmentation: Expands short user inputs (e.g., 'I know Python') into 
+    professional paragraphs to improve semantic vectorization quality.
+    """
     api_key = get_api_key()
+    # Fallback: Return original text if no API key is found
     if not api_key: return short_text 
 
     try:
         genai.configure(api_key=api_key)
-        # MODIFICATION : Utilisation du modèle disponible dans votre liste
+        # Model Selection: Using a lightweight model for low latency
         model = genai.GenerativeModel('gemini-2.5-flash-lite')
         
         if language == "en":
@@ -35,18 +41,20 @@ def augment_short_text(short_text, language="fr"):
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception:
-        # En cas d'erreur, on renvoie le texte brut pour ne pas bloquer l'app
+        # Graceful degradation: Return original text on API failure
         return short_text
 
 def translate_to_french(text):
-    """Traduit le titre ou la description en Français."""
+    """
+    Context-Aware Translation: Translates job content to French while preserving 
+    English technical terminology (Domain Adaptation).
+    """
     if not text: return ""
     api_key = get_api_key()
     if not api_key: return text
 
     try:
         genai.configure(api_key=api_key)
-        # MODIFICATION : Utilisation du modèle disponible
         model = genai.GenerativeModel('gemini-2.5-flash-lite')
         
         prompt = f"""
@@ -62,15 +70,18 @@ def translate_to_french(text):
         return text
 
 def generate_career_advice(user_profile_text, job_title, job_desc, filters, language="fr"):
-    """Génère le coaching."""
+    """
+    RAG Generation: Generates personalized career coaching (Gap Analysis) based on 
+    the retrieved job match and user profile.
+    """
     api_key = get_api_key()
-    if not api_key: return "⚠️ Erreur Clé API."
+    if not api_key: return "⚠️ Error: API Key missing."
 
     try:
         genai.configure(api_key=api_key)
-        # MODIFICATION : Utilisation du modèle disponible
         model = genai.GenerativeModel('gemini-2.5-flash-lite') 
         
+        # Prompt Engineering: Persona pattern + Chain of Thought
         if language == "en":
             prompt = f"""
             Act as an expert Data & AI Career Coach.
@@ -92,4 +103,4 @@ def generate_career_advice(user_profile_text, job_title, job_desc, filters, lang
         return response.text
 
     except Exception as e:
-        return f"⚠️ Erreur IA (Quota ou Modèle) : {str(e)}"
+        return f"⚠️ AI Error (Quota or Model): {str(e)}"

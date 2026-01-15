@@ -1,9 +1,17 @@
+# ==========================================
+# Streamlit Global Configuration
+# ==========================================
+
 [theme]
+# Force light mode to maintain the "Liquid Brutalism" aesthetic
 base = "light"
-primaryColor = "#2E86C1"  # Votre bleu personnalisé
- 
+# Main accent color (AISCA Blue)
+primaryColor = "#2E86C1"
+
 [client]
+# Hides developer options for a cleaner user experience
 toolbarMode = "minimal"
- 
+
 [ui]
+# Hides the top decoration bar and running status
 hideTopBar = true

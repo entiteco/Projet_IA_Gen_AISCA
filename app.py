@@ -6,15 +6,19 @@ import os
 import ast
 from datetime import datetime
 from collections import Counter
+import tempfile
+from fpdf import FPDF
 
 # ============================================================
-# IMPORTS DES MODULES REELS
+# CUSTOM MODULE IMPORTS (Backend Logic)
 # ============================================================
 from modules.data_loader import load_data
 from modules.nlp_engine import SemanticMatcher
 from modules.genai_engine import augment_short_text, translate_to_french, generate_career_advice
 
-# --- 1. CONFIG ---
+# ============================================================
+# 1. APPLICATION CONFIGURATION
+# ============================================================
 st.set_page_config(
     page_title="AISCA",
     page_icon="⚡",
@@ -22,17 +26,20 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- GESTION DE L'ÉTAT (LANDING vs APP) ---
+# --- Session State Management ---
+# Manages the navigation between the Landing Page and the Main App
 if 'page_state' not in st.session_state:
     st.session_state.page_state = 'landing'
 
-# Gestion de l'état de la langue
+# Manages Language Preferences (FR/EN)
 if 'lang_choice' not in st.session_state:
     st.session_state.lang_choice = 'FR' 
 
 st.session_state.language = 'fr' if st.session_state.lang_choice == 'FR' else 'en'
 
-# --- 2. CSS "LIQUID BRUTALISM" ---
+# ============================================================
+# 2. DESIGN SYSTEM: "LIQUID BRUTALISM" (CSS)
+# ============================================================
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700;800&display=swap');
@@ -42,7 +49,7 @@ st.markdown("""
         font-size: 16px; 
     }
 
-    /* FOND ANIMÉ */
+    /* Animated Liquid Background */
     .stApp {
         background-image: 
             radial-gradient(at 40% 20%, rgba(18, 36, 219, 0.5) 0px, transparent 50%),
@@ -68,7 +75,7 @@ st.markdown("""
         max-width: 1400px; 
     }
 
-    /* CONTENEURS (APP ONLY) */
+    /* Neo-Brutalist Containers */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background: #FFFFFF !important;
         border: 3px solid #000000;
@@ -90,7 +97,7 @@ st.markdown("""
         letter-spacing: -0.5px;
     }
     
-    /* HEADER APP (HERO BOX) */
+    /* Hero Section Styling */
     .hero-box {
         background-color: #1224DB !important;
         border: 3px solid black;
@@ -102,7 +109,7 @@ st.markdown("""
     }
     .hero-box h1, .hero-box h3, .hero-box p { color: #FFFFFF !important; }
 
-    /* BOUTONS */
+    /* Buttons */
     div.stButton > button {
         background-color: #1224DB;
         color: white;
@@ -125,7 +132,7 @@ st.markdown("""
         transform: translate(-3px, -3px);
     }
 
-    /* INPUTS */
+    /* Form Inputs */
     .stTextArea textarea, 
     .stSelectbox div[data-baseweb="select"] > div,
     .stMultiSelect div[data-baseweb="select"] > div {
@@ -136,7 +143,7 @@ st.markdown("""
         min-height: 50px;
     }
 
-    /* SLIDERS */
+    /* Sliders */
     div[data-baseweb="slider"] div[class*="thumb"] {
         background-color: #000000 !important;
         border: 2px solid white;
@@ -150,7 +157,7 @@ st.markdown("""
         background-color: #000000 !important;
     }
 
-    /* BADGES */
+    /* Skill Badges */
     .brut-tag {
         background-color: #1224DB;
         color: white;
@@ -196,26 +203,24 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================
-#                    LOGIQUE D'AFFICHAGE
+# 3. ROUTING LOGIC
 # =========================================================
 
 if st.session_state.page_state == 'landing':
-    # --- PAGE D'ACCUEIL (LANDING) ---
+    # --- LANDING PAGE ---
     
-    # Espace vertical pour centrer
     st.markdown("<div style='height: 5vh;'></div>", unsafe_allow_html=True)
     
     col_l, col_c, col_r = st.columns([1, 2, 1])
     
     with col_c:
-        # LOGO
+        # Logo Display
         if os.path.exists("LOGO_AISCA.png"):
             st.image("LOGO_AISCA.png", use_container_width=True)
         else:
             st.markdown("<h1 style='font-size:6rem; margin:0; text-align:center;'>🧬 AISCA</h1>", unsafe_allow_html=True)
 
-        # SOUS-TITRES
-        # J'ai remplacé <h3> par <p> avec le même style pour éviter le lien "anchor" automatique de Streamlit
+        # Subtitles (Styled P tags to avoid anchor links)
         st.markdown("""
         <div style="text-align: center;">
             <p style="font-size: 1.3rem; color:#000; margin-top:25px; margin-bottom:15px; font-weight:800; text-transform:uppercase; line-height: 1.2;">
@@ -227,15 +232,16 @@ if st.session_state.page_state == 'landing':
         </div>
         """, unsafe_allow_html=True)
         
-        # BOUTON
+        # Start Button
         if st.button("INITIALISER LE SYSTÈME", use_container_width=True):
             st.session_state.page_state = 'app'
             st.rerun()
 
 else:
-    # --- APPLICATION PRINCIPALE ---
+    # --- MAIN APPLICATION ---
 
-    # --- CONFIG DATA ---
+    # --- DATA CONFIGURATION ---
+    # Dictionary for translating skills if necessary
     SKILL_MAP = {
         "Machine Learning": "Machine Learning", "Deep Learning": "Deep Learning",
         "Data Analysis": "Analyse de données", "Data Visualization": "Visualisation de données",
@@ -252,6 +258,7 @@ else:
         "Spark": "Spark", "NoSQL": "NoSQL", "Data Warehousing": "Entrepôt de données"
     }
 
+    # UI Translations
     TRANS = {
         'fr': {
             'header_full_name': "Agent Intelligent Sémantique et Génératif pour la Cartographie des Compétences",
@@ -343,18 +350,22 @@ else:
         }
     }
 
+    # Helper function for translations
     def t(key): return TRANS[st.session_state.language][key]
     def translate_list(l, lang): return l if lang == 'en' else [SKILL_MAP.get(s.title().strip(), s) for s in l]
 
-    # --- CHARGEMENT DONNEES ---
+    # --- DATA LOADING ---
     df = load_data()
     if df.empty: st.stop()
+    
+    # Process skills for the MultiSelect input
     all_skills = [s.title() for sub in df['skills'] for s in sub if len(s)>1]
     top_skills = [x[0] for x in Counter(all_skills).most_common(120)]
     top_skills.sort()
 
-    # --- FONCTIONS VIZ ---
+    # --- VISUALIZATION FUNCTIONS (PLOTLY) ---
     def plot_radar_brut(axes, scores):
+        """Generates a Radar Chart for competency distribution."""
         fig = go.Figure(data=go.Scatterpolar(
             r=list(scores) + [scores[0]], theta=axes + [axes[0]],
             fill='toself', fillcolor='rgba(18, 36, 219, 0.4)', 
@@ -374,6 +385,7 @@ else:
         return fig
 
     def plot_heatmap_brut(axes, scores):
+        """Generates a linear Heatmap for competency intensity."""
         fig = go.Figure(data=go.Heatmap(
             z=[scores], x=axes, y=['SCORE'],
             colorscale=[[0, 'white'], [1, '#D61519']],
@@ -389,6 +401,7 @@ else:
         return fig
 
     def plot_score_gauge(score):
+        """Generates a Gauge Chart for the overall match score."""
         fig = go.Figure(go.Indicator(
             mode = "gauge+number",
             value = score * 100,
@@ -415,6 +428,7 @@ else:
         return fig
 
     def plot_skill_gap(user_skills_list, top_jobs_skills):
+        """Generates a Bar Chart comparing User Skills vs Market Demand."""
         job_skills_counter = Counter([s for sub in top_jobs_skills for s in sub])
         common_skills = job_skills_counter.most_common(8)
         
@@ -437,18 +451,19 @@ else:
         )
         return fig
 
-
     def get_axes_data(text, model):
+        """Computes embedding scores for the 5 main axes."""
         axes = ["Data", "Code", "Business", "Cloud", "IA"]
         user_emb = model.encode([text])
         axes_emb = model.encode(axes)
         scores = cosine_similarity(user_emb, axes_emb)[0]
         return axes, scores
 
-    # --- FONCTIONS DE CACHE ET SAUVEGARDE (OPTIMISÉES) ---
+    # --- CACHING & LOGGING LOGIC ---
     CSV_FILE = "logs/history.csv"
 
     def check_cache(u_text, filters):
+        """Checks if the exact query has already been processed to save API costs."""
         if not os.path.exists(CSV_FILE):
             return False, None, None
 
@@ -490,6 +505,7 @@ else:
         return False, None, None
 
     def save_log(u_text, filters, results, advice, aug):
+        """Saves the query results to CSV for history and caching."""
         top_job = results[0]['titre'] if results else "N/A"
         top_score = results[0]['score'] if results else 0
         
@@ -520,7 +536,120 @@ else:
             df_new.to_csv(CSV_FILE, mode='a', header=False, index=False)
 
     # =========================================================
-    #                       HEADER APP
+    #            PDF GENERATION UTILITY
+    # =========================================================
+    def create_pdf(user_data, results, advice, figures):
+        """
+        Generates a professional PDF report containing:
+        1. User Profile Data
+        2. Top 3 Job Matches
+        3. AI Strategic Coaching
+        4. Visualization Snapshots (Radar, Heatmap, etc.)
+        """
+        class PDF(FPDF):
+            def header(self):
+                # Add Logo if available
+                if os.path.exists("LOGO_AISCA.png"):
+                    self.image("LOGO_AISCA.png", 10, 8, 33)
+                self.set_font('Arial', 'B', 15)
+                self.cell(80)
+                self.cell(30, 10, 'AISCA - Rapport de Carrière', 0, 0, 'C')
+                self.ln(20)
+
+            def footer(self):
+                self.set_y(-15)
+                self.set_font('Arial', 'I', 8)
+                self.cell(0, 10, f'Page {self.page_no()}/{{nb}} - Généré par AISCA le {datetime.now().strftime("%d/%m/%Y")}', 0, 0, 'C')
+
+        pdf = PDF()
+        pdf.alias_nb_pages()
+        pdf.add_page()
+        
+        # Helper to handle encoding (Latin-1) for accents
+        def s(text):
+            return str(text).encode('latin-1', 'replace').decode('latin-1')
+
+        # 1. PROFILE SECTION
+        pdf.set_font('Arial', 'B', 12)
+        pdf.set_fill_color(18, 36, 219) # AISCA Blue
+        pdf.set_text_color(255, 255, 255)
+        pdf.cell(0, 10, s("1. PROFIL ANALYSÉ"), 0, 1, 'L', 1)
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font('Arial', '', 10)
+        pdf.ln(2)
+        
+        pdf.multi_cell(0, 6, s(f"Secteur : {user_data.get('domain','')}"))
+        pdf.multi_cell(0, 6, s(f"Compétences : {', '.join(user_data.get('skills',[]))}"))
+        pdf.multi_cell(0, 6, s(f"Niveaux : Code {user_data.get('code_level')}/5 - Maths {user_data.get('math_level')}/5"))
+        pdf.ln(5)
+
+        # 2. TOP MATCHES SECTION
+        pdf.set_font('Arial', 'B', 12)
+        pdf.set_fill_color(18, 36, 219)
+        pdf.set_text_color(255, 255, 255)
+        pdf.cell(0, 10, s("2. TOP 3 RECOMMANDATIONS"), 0, 1, 'L', 1)
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(2)
+
+        for i, res in enumerate(results[:3]):
+            title = res['titre']
+            score = int(res['score'] * 100)
+            desc = res['description'][:300] + "..." # Truncate description
+            
+            pdf.set_font('Arial', 'B', 11)
+            pdf.cell(0, 8, s(f"#{i+1} : {title} ({score}%)"), 0, 1)
+            pdf.set_font('Arial', 'I', 9)
+            pdf.multi_cell(0, 5, s(desc))
+            pdf.ln(3)
+        
+        pdf.ln(5)
+
+        # 3. AI COACHING SECTION
+        pdf.add_page()
+        pdf.set_font('Arial', 'B', 12)
+        pdf.set_fill_color(214, 21, 25) # AISCA Red
+        pdf.set_text_color(255, 255, 255)
+        pdf.cell(0, 10, s("3. ANALYSE STRATÉGIQUE (IA)"), 0, 1, 'L', 1)
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(5)
+        
+        pdf.set_font('Arial', '', 10)
+        # Basic Markdown cleanup
+        clean_advice = advice.replace('**', '').replace('###', '').replace('* ', '- ')
+        pdf.multi_cell(0, 6, s(clean_advice))
+        
+        # 4. VISUALIZATION SECTION
+        pdf.add_page()
+        pdf.set_font('Arial', 'B', 12)
+        pdf.set_fill_color(0, 0, 0)
+        pdf.set_text_color(255, 255, 255)
+        pdf.cell(0, 10, s("4. VISUALISATION"), 0, 1, 'L', 1)
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(5)
+        
+        try:
+            # Loop through charts, convert Plotly objects to temporary PNG images
+            for name, fig in figures.items():
+                if fig:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                        fig.write_image(tmpfile.name, width=500, height=300)
+                        
+                        pdf.set_font('Arial', 'B', 10)
+                        pdf.cell(0, 10, s(name), 0, 1)
+                        pdf.image(tmpfile.name, w=150)
+                        pdf.ln(5)
+                        
+                        # Cleanup temp files
+                        tmpfile.close()
+                        os.unlink(tmpfile.name) 
+        except Exception as e:
+            pdf.set_font('Arial', 'I', 10)
+            pdf.cell(0, 10, s(f"(Graphiques non disponibles : {str(e)})"), 0, 1)
+
+        return pdf.output(dest='S').encode('latin-1')
+
+    # =========================================================
+    #                       HEADER UI
     # =========================================================
     st.markdown(f"""
     <div class="hero-box">
@@ -540,19 +669,19 @@ else:
     st.write("")
 
     # =========================================================
-    #                BLOC 1 : VOS DONNÉES
+    #                BLOCK 1: USER INPUTS
     # =========================================================
 
     with st.container(border=True): 
         st.markdown(f"### {t('col_left')}")
         st.markdown("---")
         
-        # 1. Texte libre
+        # Narrative Bio
         user_story = st.text_area("BIO", height=140, placeholder=t('story_ph'), label_visibility="collapsed")
         
         st.write("")
         
-        # 2. Selecteurs
+        # Dropdowns & MultiSelects
         c_r1, c_r2 = st.columns(2, gap="medium")
         with c_r1: 
             st.markdown(f"**{t('domain_q')}**")
@@ -564,13 +693,11 @@ else:
         st.write("")
         st.markdown("---")
         
-        # 3. Niveaux
+        # Sliders for Proficiency
         c_l1, c_l2 = st.columns(2, gap="large")
-        
         with c_l1:
             st.markdown(f"**{t('code_lvl')}**")
             lvl_code = st.slider("Code", 1, 5, 3, label_visibility="collapsed")
-            
         with c_l2:
             st.markdown(f"**{t('math_lvl')}**")
             lvl_math = st.slider("Math", 1, 5, 3, label_visibility="collapsed")
@@ -580,7 +707,7 @@ else:
 
 
     # =========================================================
-    #                BLOC 2 : LE VERDICT
+    #                BLOCK 2: RESULTS & ANALYSIS
     # =========================================================
 
     st.write("") 
@@ -590,6 +717,7 @@ else:
         st.markdown("---")
         
         if not submit:
+            # Placeholder State
             st.markdown(f"""
             <div style="
                 background:#F1F2F6; 
@@ -606,27 +734,27 @@ else:
             """, unsafe_allow_html=True)
         
         else:
-            # LOGIQUE REELLE + CACHE
+            # --- MAIN LOGIC EXECUTION ---
             filters = {"math_level": lvl_math, "code_level": lvl_code, "domain": domain, "skills": skills}
             
-            # 1. VERIFICATION DU CACHE
+            # 1. Check Local Cache (Performance Optimization)
             is_cached, cached_results, cached_advice = check_cache(user_story, filters)
             
             if is_cached:
                 st.success("⚡ Résultat récupéré du cache (History) !")
                 results = cached_results
                 advice = cached_advice
-                is_aug = False # Pas pertinent si cache
-                full_text = user_story # Pas d'augmentation si cache
-                # On recrée juste le context pour les graphiques
+                is_aug = False 
+                full_text = user_story 
                 ctx = f"{user_story}. Skills: {', '.join(skills)}. Domain: {domain}. Level Code: {lvl_code}/5."
-                matcher = SemanticMatcher() # Besoin du matcher juste pour les embeddings des graphs
+                matcher = SemanticMatcher() 
                 
             else:
-                # 2. CALCUL (SI PAS EN CACHE)
+                # 2. Run Analysis Pipeline (API Calls + Local NLP)
                 full_text = user_story
                 is_aug = False
                 
+                # Step 2a: Augment text if input is too short
                 if len(user_story.split()) < 5 and user_story.strip() != "":
                     with st.spinner("BOOST..."):
                         full_text = augment_short_text(user_story, st.session_state.language)
@@ -634,20 +762,22 @@ else:
         
                 ctx = f"{full_text}. Skills: {', '.join(skills)}. Domain: {domain}. Level Code: {lvl_code}/5. Level Math: {lvl_math}/5."
                 
+                # Step 2b: Semantic Matching
                 matcher = SemanticMatcher()
                 with st.spinner(t('loading')):
                     results = matcher.find_top_matches(ctx, df, filters=filters, top_k=3)
                 
-                # Génération Coach
+                # Step 2c: Generative AI Coaching
                 with st.spinner(t('ia_loading')):
                     advice = generate_career_advice(ctx, results[0]['titre'], results[0]['description'], filters, st.session_state.language)
                 
-                # 3. SAUVEGARDE ENRICHIE
+                # Step 3: Save to Logs
                 if results and user_story.strip() != "":
                     save_log(user_story, filters, results, advice, is_aug)
 
-            # AFFICHAGE (Le code d'affichage reste identique)
-            # 1. LISTE DES JOBS (EN 3 COLONNES)
+            # --- DISPLAY RESULTS ---
+            
+            # 1. Job Cards
             st.markdown(f"#### TOP MATCHES")
             st.write("")
             
@@ -682,10 +812,9 @@ else:
 
             st.markdown("---")
 
-            # 2. ANALYSE STRATÉGIQUE
+            # 2. AI Coach Block
             st.markdown(f"#### {t('coach')}")
             
-            # On utilise la variable 'advice' (récupérée du cache ou calculée)
             st.markdown(f"""
             <div class="coach-box">
             {advice}
@@ -694,7 +823,7 @@ else:
             
             st.markdown("---")
 
-            # 3. VISUALISATION ET ANALYSE
+            # 3. Data Visualization
             st.markdown("#### ANALYSE VISUELLE DU PROFIL")
             st.write("Vue d'ensemble de vos forces et axes d'amélioration.")
             st.write("")
@@ -702,25 +831,62 @@ else:
             c_v1, c_v2 = st.columns([1.2, 1])
             axes, scores = get_axes_data(ctx, matcher.model)
             
+            # Create chart objects
+            fig_radar = plot_radar_brut(axes, scores)
+            fig_heat = plot_heatmap_brut(axes, scores)
+            
             with c_v1:
                 st.markdown("") 
                 st.markdown("**Répartition Sectorielle**")
-                st.plotly_chart(plot_radar_brut(axes, scores), use_container_width=True)
+                st.plotly_chart(fig_radar, use_container_width=True)
             with c_v2:
                 st.markdown("") 
                 st.markdown("**Intensité par Axe**")
                 st.write("")
-                st.plotly_chart(plot_heatmap_brut(axes, scores), use_container_width=True)
+                st.plotly_chart(fig_heat, use_container_width=True)
 
             st.write("")
 
             c_v3, c_v4 = st.columns(2)
+            
+            top_score = results[0].get('score', 0) if results else 0
+            fig_gauge = plot_score_gauge(top_score)
+            
+            top_jobs_skills = [res.get('skills', []) for res in results]
+            fig_gap = plot_skill_gap(skills, top_jobs_skills)
+            
             with c_v3:
                 st.markdown("**Performance Globale**")
-                top_score = results[0].get('score', 0) if results else 0
-                st.plotly_chart(plot_score_gauge(top_score), use_container_width=True)
+                st.plotly_chart(fig_gauge, use_container_width=True)
 
             with c_v4:
                 st.markdown("**Analyse des Écarts**")
-                top_jobs_skills = [res.get('skills', []) for res in results]
-                st.plotly_chart(plot_skill_gap(skills, top_jobs_skills), use_container_width=True)
+                st.plotly_chart(fig_gap, use_container_width=True)
+
+            # --- PDF DOWNLOAD SECTION ---
+            st.markdown("---")
+            st.write("")
+            
+            # Prepare data package for PDF
+            user_data_pdf = {
+                'domain': domain, 'skills': skills,
+                'code_level': lvl_code, 'math_level': lvl_math
+            }
+            figures_pdf = {
+                "Répartition Radar": fig_radar,
+                "Heatmap Compétences": fig_heat,
+                "Jauge de Score": fig_gauge,
+                "Gap Analysis": fig_gap
+            }
+
+            # Generate PDF bytes in memory
+            pdf_bytes = create_pdf(user_data_pdf, results, advice, figures_pdf)
+
+            # Render Download Button
+            st.download_button(
+                label="📥 TÉLÉCHARGER LE RAPPORT COMPLET (PDF)",
+                data=pdf_bytes,
+                file_name=f"Rapport_AISCA_{datetime.now().strftime('%Y%m%d')}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )

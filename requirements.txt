@@ -6,3 +6,5 @@ sentence-transformers
 google-generativeai>=0.7.0
 python-dotenv
 plotly
+fpdf
+kaleido

@@ -2,17 +2,28 @@ version: '3.8'
 
 services:
   aisca-app:
+    # Build context: Uses the Dockerfile in the current directory
     build: .
+    
+    # Custom name for easier reference in CLI (e.g., 'docker stop aisca_container')
     container_name: aisca_container
-    # Mappe le port 8501 du conteneur vers le 8501 de votre machine
+    
+    # Port Mapping: Host Port : Container Port
+    # Exposes Streamlit (8501) to localhost
     ports:
       - "8501:8501"
-    # LE SECRET : Volumes
-    # Cela permet de modifier le code en direct sans relancer le build
+    
+    # Volume Mounting (Hot Reloading)
+    # Maps the local directory to /app in the container.
+    # Enables real-time code updates without rebuilding the image.
     volumes:
       - .:/app
-    # Variables d'environnement (pour ne pas les mettre en dur)
+    
+    # Security: Injects environment variables (API Keys) from .env file
     env_file:
       - .env
-    # Commande pour forcer le rechargement auto de Streamlit
+    
+    # Runtime Command Override
+    # --server.address=0.0.0.0: Required to access the app from the host machine
+    # --server.fileWatcherType=poll: Forces polling for file changes (fixes auto-reload issues in Docker/WSL)
     command: streamlit run app.py --server.address=0.0.0.0 --server.fileWatcherType=poll
