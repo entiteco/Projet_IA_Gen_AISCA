@@ -306,7 +306,7 @@ else:
         },
         'en': {
             'header_full_name': "Intelligent Semantic and Generative Agent for Skills Mapping",
-            'subtitle': "Don't let luck decide your career.",
+            'subtitle': "Don't let chance decide your career path.",
             'about_btn': "ABOUT",
             'about_txt': """
             ### 🤖 AISCA (AI Skills & Career Agent)

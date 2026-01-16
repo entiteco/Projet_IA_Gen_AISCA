@@ -322,3 +322,116 @@ Please retry in 38.898657062s. [links {
   seconds: 38
 }
 ]","[{'titre': 'DEVOPS MANAGER', 'score': 0.5586235883485426, 'raw_score': 0.32617531418800355, 'block_scores': {'Data Analysis': 0.28343135118484497, 'Machine Learning': 0.3719235956668854, 'Data Engineering': 0.31604325771331787, 'NLP & GenAI': 0.3552444577217102, 'Soft Skills': 0.3016238808631897}, 'description': 'Oversees DevOps teams responsible for automating software delivery processes while ensuring alignment with organizational goals.', 'skills': ['DevOps', 'Team Management', 'Project Management', 'CI/CD', 'Cloud Computing', 'Automation', 'Communication', 'Leadership', 'Budgeting'], 'reasons': []}, {'titre': 'DEVOPS MANAGER', 'score': 0.5586235883485426, 'raw_score': 0.32617531418800355, 'block_scores': {'Data Analysis': 0.28343135118484497, 'Machine Learning': 0.3719235956668854, 'Data Engineering': 0.31604325771331787, 'NLP & GenAI': 0.3552444577217102, 'Soft Skills': 0.3016238808631897}, 'description': 'Manages DevOps teams and projects.', 'skills': ['DevOps Practices', 'Team Leadership', 'Project Management', 'Automation'], 'reasons': []}, {'titre': 'Coder', 'score': 0.5574649047600304, 'raw_score': 0.32565330862998965, 'block_scores': {'Data Analysis': 0.28343135118484497, 'Machine Learning': 0.3719235956668854, 'Data Engineering': 0.31604325771331787, 'NLP & GenAI': 0.3552444577217102, 'Soft Skills': 0.3016238808631897}, 'description': 'Writes code in various programming languages to develop software applications. Responsibilities include debugging and maintaining code quality.', 'skills': ['Programming', 'Algorithms', 'Data Structures', 'Problem Solving', 'Debugging', 'Software Development'], 'reasons': []}]",fr
+2026-01-15 16:28:05,"Je conçois des réseaux de neurones profonds pour l'imagerie médicale."" + Compétence Deep Learning.",False,Data Science,"Deep Learning, Machine Learning, Python",4,5,DATA SCIENTIST,0.98,"⚠️ AI Error (Quota or Model): 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite
+Please retry in 58.090127248s. [links {
+  description: ""Learn more about Gemini API quotas""
+  url: ""https://ai.google.dev/gemini-api/docs/rate-limits""
+}
+, violations {
+  quota_metric: ""generativelanguage.googleapis.com/generate_content_free_tier_requests""
+  quota_id: ""GenerateRequestsPerDayPerProjectPerModel-FreeTier""
+  quota_dimensions {
+    key: ""model""
+    value: ""gemini-2.5-flash-lite""
+  }
+  quota_dimensions {
+    key: ""location""
+    value: ""global""
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 58
+}
+]","[{'titre': 'DATA SCIENTIST', 'score': 0.98, 'raw_score': 0.5237567964196205, 'block_scores': {'Data Analysis': 0.3809627294540405, 'Machine Learning': 0.584722101688385, 'Data Engineering': 0.37343716621398926, 'NLP & GenAI': 0.3015739917755127, 'Soft Skills': 0.3589514493942261}, 'description': 'Utilizes statistical analysis and machine learning techniques to derive insights from complex datasets. Proficient in programming languages like Python or R.', 'skills': ['Python', 'R', 'Machine Learning', 'Data Science', 'Statistics', 'SQL', 'Hadoop', 'Spark', 'Data Wrangling', 'Data Visualization', 'Cloud Computing'], 'reasons': ['🚀 Boost Domaine (Data Science)']}, {'titre': 'Computer Research Scientist', 'score': 0.9653162969328434, 'raw_score': 0.4837567964196205, 'block_scores': {'Data Analysis': 0.3809627294540405, 'Machine Learning': 0.584722101688385, 'Data Engineering': 0.37343716621398926, 'NLP & GenAI': 0.3015739917755127, 'Soft Skills': 0.3589514493942261}, 'description': 'Conducts research in computing fields to develop new technologies or methodologies. Publishes findings in academic journals and presents at conferences.', 'skills': ['Research Methods', 'Data Analysis', 'Algorithms', 'Machine Learning', 'Publications', 'Scientific Writing', 'Programming'], 'reasons': ['🚀 Boost Domaine (Data Science)']}, {'titre': 'DATA SCIENTIST', 'score': 0.9653162969328434, 'raw_score': 0.4837567964196205, 'block_scores': {'Data Analysis': 0.3809627294540405, 'Machine Learning': 0.584722101688385, 'Data Engineering': 0.37343716621398926, 'NLP & GenAI': 0.3015739917755127, 'Soft Skills': 0.3589514493942261}, 'description': 'Applies machine learning and statistical techniques to analyze data.', 'skills': ['Machine Learning', 'Statistical Analysis', 'Data Mining', 'Programming'], 'reasons': ['🚀 Boost Domaine (Data Science)']}]",fr
+2026-01-15 19:24:02,Je suis très intéressé par les modèles de machine learning et j'aime beaucoup programmer en python.,False,Data Science,"Algorithms, Aws, Deep Learning, Machine Learning, Python",4,5,Computer Research Scientist,0.98,"Absolument ! En tant que coach de carrière expert en Data & IA, voici mon analyse et mon plan d'action pour vous aider à atteindre votre objectif de devenir Computer Research Scientist.
+
+## Analyse de Correspondance : Votre Profil vs. Computer Research Scientist
+
+Votre profil actuel présente une **excellente base** pour un rôle de Computer Research Scientist, particulièrement dans le domaine de la Data Science et de l'IA.
+
+*   **Points Forts Clés :**
+    *   **Passion pour le ML et programmation Python :** Indispensable pour la recherche et le développement de nouveaux algorithmes.
+    *   **Maîtrise de Python :** Langage de facto pour la recherche en IA.
+    *   **Expertise en Machine Learning & Deep Learning :** Compétences fondamentales pour ce poste.
+    *   **Algorithmes :** Compréhension solide des fondations théoriques.
+    *   **AWS :** Expérience dans le déploiement et l'utilisation de plateformes cloud pour les workloads IA/ML.
+    *   **Level Code 4/5 & Level Math 5/5 :** Démontrent une maturité technique et une forte capacité analytique/théorique, cruciales pour la recherche.
+
+## Analyse des Manques (Gap Analysis)
+
+Bien que votre profil soit déjà très solide, quelques aspects peuvent être renforcés pour maximiser vos chances et vous aligner parfaitement avec les attentes d'un Computer Research Scientist.
+
+*   **Manques Potentiels :**
+    *   **Publication de recherche / Contributions académiques :** Les Computer Research Scientists sont souvent jugés sur leurs publications dans des conférences/journaux reconnus.
+    *   **Expérience en recherche dirigée / problématiques spécifiques :** Montrer une expérience dans la résolution de problèmes de recherche complexes et originaux.
+    *   **Approfondissement théorique avancé :** Bien que votre niveau en mathématiques soit excellent, certains domaines très spécifiques (ex: théorie des graphes avancée, calcul stochastique, optimisation complexe) peuvent être plus pertinents selon le domaine de recherche.
+    *   **Domaines de spécialisation précis :** Le ""Computer Research Scientist"" est un terme large. Avez-vous une idée des sous-domaines qui vous intéressent le plus (ex: NLP, Computer Vision, Reinforcement Learning, IA éthique, IA explicable) ?
+    *   **Outils de recherche spécifiques :** Utilisation de bibliothèques de recherche avancées (ex: PyTorch Lightning, Hugging Face Transformers pour le NLP, TensorFlow research modules), plateformes de gestion de données de recherche (MLflow, WandB).
+    *   **Compétences en communication scientifique :** Savoir présenter des résultats de recherche, rédiger des articles, faire des présentations techniques.
+
+## Plan d'Action pour Atteindre le Poste de Computer Research Scientist
+
+Voici un plan d'action structuré pour combler les écarts et capitaliser sur vos forces :
+
+### Phase 1 : Renforcement des Compétences & Production de Contenu (3-6 mois)
+
+*   **Approfondir les Fondations Théoriques :**
+    *   **Objectif :** Maîtriser les aspects mathématiques et algorithmiques les plus avancés pertinents pour la recherche IA.
+    *   **Actions :**
+        *   Suivre des cours avancés (MOOCs, universités) sur des sujets comme le calcul stochastique, la théorie de l'information, l'optimisation non linéaire, les méthodes bayésiennes avancées.
+        *   Lire des articles fondamentaux dans des domaines de recherche qui vous intéressent.
+*   **Acquérir de l'Expérience en Recherche Pratique :**
+    *   **Objectif :** Développer un projet de recherche original et produire des résultats exploitables.
+    *   **Actions :**
+        *   **Projet Personnel de Recherche :** Identifier une problématique ouverte dans un domaine de l'IA qui vous passionne. Définir une hypothèse, concevoir une méthodologie, implémenter, tester et analyser les résultats. Documenter rigoureusement.
+        *   **Participation à des Compétitions de Recherche :** Chercher des Kaggle Datasets avec un volet recherche, des challenges sur des plateformes comme DrivenData ou des compétitions académiques.
+        *   **Contributions Open Source :** Participer à des projets open source de bibliothèques IA/ML.
+*   **Acquérir des Publications (ou des pré-publications) :**
+    *   **Objectif :** Construire un historique de publications.
+    *   **Actions :**
+        *   Transformer vos projets personnels de recherche en articles de conférence (soumettre à des workshops, des conférences régionales ou des journées thématiques). Visez des pré-publications sur arXiv si le contenu est solide.
+        *   Collaborer sur des projets existants avec des chercheurs pour co-écrire des articles.
+
+### Phase 2 : Spécialisation et Mise en Valeur (2-4 mois)
+
+*   **Identifier votre Domaine de Spécialisation :**
+    *   **Objectif :** Cibler précisément le type de recherche que vous souhaitez mener.
+    *   **Actions :**
+        *   Définir 1 à 2 domaines de prédilection (ex: NLP, Computer Vision, RL, Graph Neural Networks, Explainable AI).
+        *   Cartographier les laboratoires de recherche et les entreprises qui travaillent dans ces domaines.
+*   **Maîtriser les Outils de Recherche Avancés :**
+    *   **Objectif :** Être à l'aise avec l'écosystème de recherche.
+    *   **Actions :**
+        *   Maîtriser les frameworks de deep learning de pointe (PyTorch, TensorFlow) et leurs outils associés (Hugging Face, PyTorch Lightning).
+        *   Se familiariser avec les outils de suivi d'expérimentation (MLflow, Weights & Biases).
+        *   Apprendre à utiliser efficacement des plateformes cloud pour la recherche (sur AWS, explorer plus en profondeur SageMaker, EC2 instances optimisées pour le ML).
+*   **Développer vos Compétences en Communication Scientifique :**
+    *   **Objectif :** Savoir présenter votre travail de manière percutante.
+    *   **Actions :**
+        *   Préparer et donner des présentations techniques de vos projets.
+        *   Travailler sur la rédaction de votre CV et de votre lettre de motivation pour mettre en avant vos contributions à la recherche.
+        *   Créer un profil sur LinkedIn mettant en avant vos projets de recherche et vos publications.
+
+### Phase 3 : Candidature et Réseautage (Continu)
+
+*   **Cibler les Opportunités :**
+    *   **Objectif :** Identifier les postes de Computer Research Scientist les plus pertinents.
+    *   **Actions :**
+        *   Surveiller les offres d'emploi dans les départements R&D des grandes entreprises tech (Google AI, Meta AI, Microsoft Research, IBM Research, NVIDIA), les startups d'IA, et les instituts de recherche académiques.
+        *   Rechercher des postes d' ""AI Researcher"", ""Machine Learning Scientist"", ""Deep Learning Researcher"".
+*   **Réseautage Stratégique :**
+    *   **Objectif :** Établir des contacts et découvrir des opportunités cachées.
+    *   **Actions :**
+        *   Assister à des conférences IA (NeurIPS, ICML, ICLR, CVPR, ACL, etc.).
+        *   Participer à des meetups locaux sur la Data Science et l'IA.
+        *   Contacter directement des chercheurs dont le travail vous intéresse pour discuter de leurs recherches et des opportunités potentielles.
+*   **Préparation aux Entretiens :**
+    *   **Objectif :** Réussir les entretiens techniques et comportementaux spécifiques aux postes de recherche.
+    *   **Actions :**
+        *   S'entraîner aux questions sur les algorithmes, le machine learning, le deep learning, et la résolution de problèmes de recherche.
+        *   Être prêt à discuter en détail de vos projets de recherche, de vos publications, et de vos choix méthodologiques.
+        *   Préparer des questions pertinentes à poser aux intervieweurs sur les projets de recherche en cours, les défis de l'équipe, et la culture du laboratoire.
+
+Ce plan vous permettra de structurer votre développement et de transformer votre solide base actuelle en un profil très compétitif pour un poste de Computer Research Scientist. N'hésitez pas si vous souhaitez approfondir certains points !","[{'titre': 'Computer Research Scientist', 'score': 0.98, 'raw_score': 0.518964981585741, 'block_scores': {'Data Analysis': 0.3913027048110962, 'Machine Learning': 0.6074550151824951, 'Data Engineering': 0.349244087934494, 'NLP & GenAI': 0.2624383568763733, 'Soft Skills': 0.2950669527053833}, 'description': 'Conducts research in computing fields to develop new technologies or methodologies. Publishes findings in academic journals and presents at conferences.', 'skills': ['Research Methods', 'Data Analysis', 'Algorithms', 'Machine Learning', 'Publications', 'Scientific Writing', 'Programming'], 'reasons': ['🚀 Boost Domaine (Data Science)']}, {'titre': 'DATA SCIENTIST', 'score': 0.98, 'raw_score': 0.518964981585741, 'block_scores': {'Data Analysis': 0.3913027048110962, 'Machine Learning': 0.6074550151824951, 'Data Engineering': 0.349244087934494, 'NLP & GenAI': 0.2624383568763733, 'Soft Skills': 0.2950669527053833}, 'description': 'Utilizes statistical analysis and machine learning techniques to derive insights from complex datasets. Proficient in programming languages like Python or R.', 'skills': ['Python', 'R', 'Machine Learning', 'Data Science', 'Statistics', 'SQL', 'Hadoop', 'Spark', 'Data Wrangling', 'Data Visualization', 'Cloud Computing'], 'reasons': ['🚀 Boost Domaine (Data Science)']}, {'titre': 'DATA SCIENTIST', 'score': 0.9585324116893231, 'raw_score': 0.478964981585741, 'block_scores': {'Data Analysis': 0.3913027048110962, 'Machine Learning': 0.6074550151824951, 'Data Engineering': 0.349244087934494, 'NLP & GenAI': 0.2624383568763733, 'Soft Skills': 0.2950669527053833}, 'description': 'Applies machine learning and statistical techniques to analyze data.', 'skills': ['Machine Learning', 'Statistical Analysis', 'Data Mining', 'Programming'], 'reasons': ['🚀 Boost Domaine (Data Science)']}]",fr

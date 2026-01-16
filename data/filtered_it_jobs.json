@@ -3679,17 +3679,6 @@
     "certifications": "DAMA Certified Data Management Professional (CDMP), IBM Certified Data Architect"
   },
   {
-    "job_title": "DATA SCIENTIST",
-    "job_description": "Applies machine learning and statistical techniques to analyze data.",
-    "skills": [
-      "Machine Learning",
-      "Statistical Analysis",
-      "Data Mining",
-      "Programming"
-    ],
-    "certifications": "IBM Data Science Professional Certificate, AWS Certified Machine Learning - Specialty"
-  },
-  {
     "job_title": "DATABASE ADMINISTRATOR",
     "job_description": "Manages and maintains databases.",
     "skills": [
